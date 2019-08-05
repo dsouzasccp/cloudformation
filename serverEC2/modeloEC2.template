@@ -1,0 +1,338 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Parameters" : {
+    "EnvironmentValue" : {
+      "AllowedValues" : [
+        "QA",
+        "Prd"
+      ],
+      "Default" : "QA",
+      "Description" : "Qual o environment desejado?",
+      "Type" : "String"
+    }
+  },
+  "Conditions" : {    
+    
+    "Hmg" : {"Fn::Equals" : [{"Ref" : "EnvironmentValue"}, "Hmg"]},
+    "QA" : {"Fn::Equals" : [{"Ref" : "EnvironmentValue"}, "QA"]},
+    "Prd" : {"Fn::Equals" : [{"Ref" : "EnvironmentValue"}, "Prd"]},
+
+    "NonPrdNotify": {"Condition": "Hmg"},
+    "PrdNotify": { "Fn::Or": [{"Condition": "QA"}, {"Condition": "Prd" }] }    
+
+  },
+  "Mappings" : {
+    "Environments" : {
+
+      "QA" : {
+        "LowerCase" : "qa",
+        "VPC" : "vpc-123456",
+        "AMI" : "ami-9cdf8bf0",
+        "InstanceType" : "t2.small",
+        "KeyPair" : "key-PRD",
+        "HostedZoneId": "Z14MVVACLHVY4T",
+        "HostedZoneName": "dominio.com.br.",
+        "SecurityGroup" : "sg-123456",
+        "SubnetAppA" : "subnet-123456",
+        "SubnetAppB" : "subnet-123456",
+        "SubnetAppC" : "subnet-123456",
+        "CacheNodeType": "cache.t2.small",
+        "NumCacheNodes": "1"
+      },
+
+      "Prd" : {
+        "LowerCase" : "qa",
+        "VPC" : "vpc-123456",
+        "AMI" : "ami-9cdf8bf0",
+        "InstanceType" : "t2.small",
+        "KeyPair" : "key-PRD",
+        "HostedZoneId": "Z14MVVACLHVY4T",
+        "HostedZoneName": "dominio.com.br.",
+        "SecurityGroup" : "sg-123456",
+        "SubnetAppA" : "subnet-123456",
+        "SubnetAppB" : "subnet-123456",
+        "SubnetAppC" : "subnet-123456",
+        "CacheNodeType": "cache.t2.small",
+        "NumCacheNodes": "1"
+      }
+    }
+  },
+  "Resources" : {
+    "SecurityGroupEC2Server1" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" : {
+        "GroupDescription" : { "Fn::Join"  : [ "-" , [ "SG", "EC2", { "Ref" : "EnvironmentValue" }, "Server1" ]] },
+        "VpcId" :  { "Fn::FindInMap" : ["Environments", { "Ref" : "EnvironmentValue"}, "VPC"] },
+        "SecurityGroupIngress" : [
+          { "IpProtocol": "tcp", "FromPort": "3389", "ToPort": "3389", "CidrIp": "0.0.0.0/0" },
+          { "IpProtocol": "tcp", "FromPort": "80", "ToPort": "80", "CidrIp": "0.0.0.0/0" },
+          { "IpProtocol": "tcp", "FromPort": "443", "ToPort": "443", "CidrIp": "0.0.0.0/0" },
+          { "IpProtocol": "tcp", "FromPort": "5985", "ToPort": "5985", "CidrIp": "0.0.0.0/0" }
+        ],
+        "Tags" : [
+          {
+            "Key" : "Name",
+            "Value" : { "Fn::Join"  : [ "-" , [ "SG", "EC2", { "Ref" : "EnvironmentValue" }, "Server1" ]] }
+          },
+          {
+            "Key" : "Environment",
+            "Value" : { "Ref" : "EnvironmentValue" }
+          }
+        ]
+      }
+    },
+    "SecurityGroupELBServer1" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" : {
+        "GroupDescription" : { "Fn::Join"  : [ "-" , [ "SG", "ELB", { "Ref" : "EnvironmentValue" }, "Server1" ]] },
+        "VpcId" :  { "Fn::FindInMap" : ["Environments", { "Ref" : "EnvironmentValue"}, "VPC"] },
+        "SecurityGroupIngress" : [
+          { "IpProtocol" : "tcp", "FromPort" : "80", "ToPort" : "80", "CidrIp" : "0.0.0.0/0" },
+          { "IpProtocol" : "tcp", "FromPort" : "443", "ToPort" : "443", "CidrIp" : "0.0.0.0/0" }
+        ],
+        "Tags" : [
+          {
+            "Key" : "Name",
+            "Value" : { "Fn::Join"  : [ "-" , [ "SG", "ELB", { "Ref" : "EnvironmentValue" }, "Server1" ]] }
+          },
+          {
+            "Key" : "Environment",
+            "Value" : { "Ref" : "EnvironmentValue" }
+          }
+        ]
+      }
+    },
+    "ElasticLoadBalanceServer1" : {
+      "Type" : "AWS::ElasticLoadBalancing::LoadBalancer",
+      "Properties" : {
+        "LoadBalancerName" : { "Fn::Join"  : [ "-" , [ "ELB", { "Ref" : "EnvironmentValue" }, "Server1" ]] },
+        "SecurityGroups" : [ { "Fn::FindInMap" : ["Environments", { "Ref" : "EnvironmentValue" }, "SecurityGroup"] }, { "Ref": "SecurityGroupELBServer1" } ],
+        "Instances": [ { "Fn::If" : [ "NonPrdNotify", { "Ref" : "EC2Server1" }, { "Ref" : "AWS::NoValue" } ] } ],
+        "Subnets" : [
+          { "Fn::FindInMap" : ["Environments", { "Ref" : "EnvironmentValue" }, "SubnetAppA"] },
+          { "Fn::FindInMap" : ["Environments", { "Ref" : "EnvironmentValue" }, "SubnetAppB"] },
+          { "Fn::FindInMap" : ["Environments", { "Ref" : "EnvironmentValue" }, "SubnetAppC"] }
+        ],
+        "Scheme" : "internet-facing",
+        "Listeners" : [
+          { "LoadBalancerPort" : "80", "InstancePort" : "80", "Protocol" : "HTTP" }
+        ],
+        "HealthCheck" : {
+          "Target" : "HTTP:80/elb-on.html",
+          "HealthyThreshold" : "3",
+          "UnhealthyThreshold" : "3",
+          "Interval" : "20",
+          "Timeout" : "4"
+        },
+        "ConnectionDrainingPolicy": {
+          "Enabled" : "true",
+          "Timeout" : "300"
+        },
+        "Tags": [
+          {
+            "Key": "environment",
+            "Value": { "Fn::Join"  : [ "-" , [ { "Ref" : "EnvironmentValue" }, "Server1" ]] }
+          },
+          {
+            "Key" : "Environment",
+            "Value" : { "Ref" : "EnvironmentValue" }
+          }
+        ]
+      }
+    },
+    
+    "IAMRoleServer1":{
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument" : {
+          "Version":"2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "ec2.amazonaws.com"
+                ]
+              },
+              "Action":[
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        },
+        "ManagedPolicyArns": [ "arn:aws:iam::aws:policy/AmazonEC2ReadOnlyAccess" ]
+      }
+    },
+    "IAMInstanceProfileServer1": {
+      "Type" : "AWS::IAM::InstanceProfile",
+      "Properties" : {
+        "Path": "/",
+        "Roles": [ { "Ref" : "IAMRoleServer1" } ]
+      }
+    },    
+    "EC2Server1": {
+      "Type": "AWS::EC2::Instance",
+      "Condition" : "NonPrdNotify",
+      "Properties": {
+        "Monitoring": "True",
+        "ImageId": { "Fn::FindInMap" : ["Environments", { "Ref" : "EnvironmentValue" }, "AMI"] },
+        "KeyName": { "Fn::FindInMap" : ["Environments", { "Ref" : "EnvironmentValue" }, "KeyPair"] },
+        "InstanceType": { "Fn::FindInMap" : ["Environments", { "Ref" : "EnvironmentValue" }, "InstanceType"] },
+        "IamInstanceProfile": { "Ref": "IAMInstanceProfileServer1" },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": { "Fn::Join"  : [ "-" , [ "GrupoSifra", { "Ref" : "EnvironmentValue" }, "Server1" ]] }
+          },
+          {
+            "Key" : "Start",
+            "Value" : { "Fn::If" : [ "NonPrdNotify", "7:00", { "Ref" : "AWS::NoValue" } ] }
+          },
+          {
+            "Key" : "Stop",
+            "Value" : { "Fn::If" : [ "NonPrdNotify", "22:00", { "Ref" : "AWS::NoValue" } ] }
+          },
+          {
+            "Key" : "Environment",
+            "Value" : { "Ref" : "EnvironmentValue" }
+          }
+        ],
+        "NetworkInterfaces": [
+          {
+            "AssociatePublicIpAddress": "true",
+            "DeviceIndex": "0",
+            "GroupSet": [ { "Ref": "SecurityGroupEC2Server1" }, { "Fn::FindInMap" : ["Environments", { "Ref" : "EnvironmentValue" }, "SecurityGroup"] } ],
+            "SubnetId": { "Fn::FindInMap" : ["Environments", { "Ref" : "EnvironmentValue" }, "SubnetAppA"] }
+          }
+
+        ]
+      }
+    },
+    "LaunchConfigurationServer1": {
+      "Type" : "AWS::AutoScaling::LaunchConfiguration",
+      "Condition" : "PrdNotify",
+      "Properties" : {        
+        "AssociatePublicIpAddress" : "True",
+        "InstanceMonitoring": "True",
+        "KeyName" : { "Fn::FindInMap" : ["Environments", { "Ref" : "EnvironmentValue" }, "KeyPair"] },
+        "ImageId" : { "Fn::FindInMap" : ["Environments", { "Ref" : "EnvironmentValue" }, "AMI"] },
+        "InstanceType" : { "Fn::FindInMap" : ["Environments", { "Ref" : "EnvironmentValue" }, "InstanceType"] },
+        "IamInstanceProfile": { "Ref": "IAMInstanceProfileServer1" },
+        "SecurityGroups": [
+          {"Ref": "SecurityGroupEC2Server1"}, { "Fn::FindInMap" : ["Environments", { "Ref" : "EnvironmentValue" }, "SecurityGroup"] }
+        ],
+        "UserData": { "Fn::Base64" : { "Fn::Join" : ["\n", [
+
+          "<powershell>",
+          
+          
+          "</powershell>",
+          "<persist> true </persist>"
+          
+
+        ]]}}
+      }
+    },
+    "AutoScalingGroupServer1": {
+      "Type": "AWS::AutoScaling::AutoScalingGroup",
+      "Condition": "PrdNotify",
+      "Properties": {
+        "AvailabilityZones": [ "us-east-1a", "us-east-1b", "us-east-1c"],
+        "LaunchConfigurationName": { "Ref": "LaunchConfigurationServer1" },
+        "LoadBalancerNames" : [ {"Ref" : "ElasticLoadBalanceServer1"} ],
+        "MaxSize": {"Fn::FindInMap": ["Environments", { "Ref": "EnvironmentValue" }, "ASGMAX" ] },
+        "MinSize": {"Fn::FindInMap": ["Environments", { "Ref": "EnvironmentValue" }, "ASGMIN" ] },
+        "VPCZoneIdentifier": [ 
+          { "Fn::FindInMap": [ "Environments", { "Ref": "EnvironmentValue" }, "SubnetAppA" ] },
+          { "Fn::FindInMap": [ "Environments", { "Ref": "EnvironmentValue" }, "SubnetAppB" ] },
+          { "Fn::FindInMap": [ "Environments", { "Ref": "EnvironmentValue" }, "SubnetAppC" ] }
+        ],
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": { "Fn::Join": ["-", ["GrupoSifra", { "Ref": "EnvironmentValue" }, "Server1" ]]},
+            "PropagateAtLaunch": "true"
+          },
+          {
+            "Key": "Environment",
+            "Value": { "Ref": "EnvironmentValue" },
+            "PropagateAtLaunch": "true"
+          }
+        ]
+      }
+    },
+
+    "Route53HostRecordServer1": {
+      "Type" : "AWS::Route53::RecordSet",
+      "Properties" : {
+        "HostedZoneId" : { "Fn::FindInMap" : ["Environments", { "Ref" : "EnvironmentValue" }, "HostedZoneIdGrupoSifra"] },
+        "Name" : { "Fn::Join"  : [ "" , [ "Server1-", { "Ref" : "EnvironmentValue" }, ".", { "Fn::FindInMap" : ["Environments", { "Ref" : "EnvironmentValue" }, "HostedZoneNameGrupoSifra"] } ]] },
+        "TTL": "300",
+        "Type" : "CNAME",
+        "ResourceRecords": [{ "Fn::GetAtt" : [ "ElasticLoadBalanceServer1", "DNSName" ]}]
+      }
+    },
+
+    "NetworkInAlarmUpHighServer1" : {
+      "Type" : "AWS::CloudWatch::Alarm",
+      "Condition" : "PrdNotify",
+      "Properties" : {
+        "AlarmDescription" : "High NetworkIn",
+        "MetricName" : "NetworkIn",
+        "Namespace" : "AWS/EC2",
+        "Statistic" : "Average",
+        "Period" : "60",
+        "EvaluationPeriods" : "2",
+        "Threshold" : "200000000",
+        "AlarmActions": [ { "Ref": "ScaleUpPolicyNetworkInServer1" } ],
+        "ComparisonOperator" : "GreaterThanOrEqualToThreshold",
+        "Dimensions" : [ {
+          "Name" : "AutoScalingGroupName",
+          "Value" : { "Ref" : "AutoScalingGroupServer1" }
+        } ]
+      }
+    },
+
+    "NetworkInAlarmDownLowServer1" : {
+      "Type" : "AWS::CloudWatch::Alarm",
+      "Condition" : "PrdNotify",
+      "Properties" : {
+        "AlarmDescription" : "Low NetworkIn",
+        "MetricName" : "NetworkIn",
+        "Namespace" : "AWS/EC2",
+        "Statistic" : "Average",
+        "Period" : "300",
+        "EvaluationPeriods" : "2",
+        "Threshold" : "100000000",
+        "AlarmActions": [ { "Ref": "ScaleDownPolicyNetworkInServer1" } ],
+        "ComparisonOperator" : "LessThanThreshold",
+        "Dimensions" : [ {
+          "Name" : "AutoScalingGroupName",
+          "Value" : { "Ref" : "AutoScalingGroupServer1" }
+        } ]
+      }
+    },
+
+    "ScaleUpPolicyNetworkInServer1" : {
+       "Type" : "AWS::AutoScaling::ScalingPolicy",
+       "Condition" : "PrdNotify",
+       "Properties" : {
+          "AdjustmentType" : "ChangeInCapacity",
+          "AutoScalingGroupName" : { "Ref" : "AutoScalingGroupServer1" },
+          "Cooldown" : 60,
+          "ScalingAdjustment" : 1
+       }
+    },
+
+    "ScaleDownPolicyNetworkInServer1" : {
+       "Type" : "AWS::AutoScaling::ScalingPolicy",
+       "Condition" : "PrdNotify",
+       "Properties" : {
+          "AdjustmentType" : "ChangeInCapacity",
+          "AutoScalingGroupName" : { "Ref" : "AutoScalingGroupServer1" },
+          "Cooldown" : 60,
+          "ScalingAdjustment" : -1
+       }
+    }
+  }
+}

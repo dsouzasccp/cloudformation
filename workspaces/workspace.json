@@ -1,0 +1,15 @@
+{aws --region sa-east-1 workspaces create-workspaces --cli-input-json file://sp/workspaces.json
+    "Workspaces" : [
+      {
+        "DirectoryId" : "d-9467305add",
+        "UserName" : "lais.borges",
+        "BundleId" : "wsb-wzv36kmg6",
+        "WorkspaceProperties": {
+            "RunningMode": "AUTO_STOP",
+            "RunningModeAutoStopTimeoutInMinutes": 60,
+            "RootVolumeSizeGib": 80,
+            "UserVolumeSizeGib": 10
+        }
+      }
+    ]
+}

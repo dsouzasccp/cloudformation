@@ -1,0 +1,411 @@
+{
+    "Workspaces" : [
+      {
+        "DirectoryId" : "d-9467305add",
+        "UserName" : "adeildo.queiroz",
+        "BundleId" : "wsb-wzv36kmg6",
+        "WorkspaceProperties": {
+            "RunningMode": "AUTO_STOP",
+            "RunningModeAutoStopTimeoutInMinutes": 60,
+            "RootVolumeSizeGib": 80,
+            "UserVolumeSizeGib": 10
+        }
+      },
+      {
+        "DirectoryId" : "d-9467305add",
+        "UserName" : "amanda.santos",
+        "BundleId" : "wsb-wzv36kmg6",
+        "WorkspaceProperties": {
+            "RunningMode": "AUTO_STOP",
+            "RunningModeAutoStopTimeoutInMinutes": 60,
+            "RootVolumeSizeGib": 80,
+            "UserVolumeSizeGib": 10
+        }
+      },
+      {
+        "DirectoryId" : "d-9467305add",
+        "UserName" : "ana.santos",
+        "BundleId" : "wsb-wzv36kmg6",
+        "WorkspaceProperties": {
+            "RunningMode": "AUTO_STOP",
+            "RunningModeAutoStopTimeoutInMinutes": 60,
+            "RootVolumeSizeGib": 80,
+            "UserVolumeSizeGib": 10
+        }
+      },
+      {
+        "DirectoryId" : "d-9467305add",
+        "UserName" : "andreia.carvalho",
+        "BundleId" : "wsb-wzv36kmg6",
+        "WorkspaceProperties": {
+            "RunningMode": "AUTO_STOP",
+            "RunningModeAutoStopTimeoutInMinutes": 60,
+            "RootVolumeSizeGib": 80,
+            "UserVolumeSizeGib": 10
+        }
+      },
+      {
+        "DirectoryId" : "d-9467305add",
+        "UserName" : "claudio.fernandes",
+        "BundleId" : "wsb-wzv36kmg6",
+        "WorkspaceProperties": {
+            "RunningMode": "AUTO_STOP",
+            "RunningModeAutoStopTimeoutInMinutes": 60,
+            "RootVolumeSizeGib": 80,
+            "UserVolumeSizeGib": 10
+        }
+      },
+      {
+        "DirectoryId" : "d-9467305add",
+        "UserName" : "crsillos",
+        "BundleId" : "wsb-wzv36kmg6",
+        "WorkspaceProperties": {
+            "RunningMode": "AUTO_STOP",
+            "RunningModeAutoStopTimeoutInMinutes": 60,
+            "RootVolumeSizeGib": 80,
+            "UserVolumeSizeGib": 10
+        }
+      },
+      {
+        "DirectoryId" : "d-9467305add",
+        "UserName" : "dagarcia",
+        "BundleId" : "wsb-wzv36kmg6",
+        "WorkspaceProperties": {
+            "RunningMode": "AUTO_STOP",
+            "RunningModeAutoStopTimeoutInMinutes": 60,
+            "RootVolumeSizeGib": 80,
+            "UserVolumeSizeGib": 10
+        }
+      },
+      {
+        "DirectoryId" : "d-9467305add",
+        "UserName" : "danilo.santos",
+        "BundleId" : "wsb-wzv36kmg6",
+        "WorkspaceProperties": {
+            "RunningMode": "AUTO_STOP",
+            "RunningModeAutoStopTimeoutInMinutes": 60,
+            "RootVolumeSizeGib": 80,
+            "UserVolumeSizeGib": 10
+        }
+      },
+      {
+        "DirectoryId" : "d-9467305add",
+        "UserName" : "debora.santos",
+        "BundleId" : "wsb-wzv36kmg6",
+        "WorkspaceProperties": {
+            "RunningMode": "AUTO_STOP",
+            "RunningModeAutoStopTimeoutInMinutes": 60,
+            "RootVolumeSizeGib": 80,
+            "UserVolumeSizeGib": 10
+        }
+      },
+      {
+        "DirectoryId" : "d-9467305add",
+        "UserName" : "dechaves",
+        "BundleId" : "wsb-wzv36kmg6",
+        "WorkspaceProperties": {
+            "RunningMode": "AUTO_STOP",
+            "RunningModeAutoStopTimeoutInMinutes": 60,
+            "RootVolumeSizeGib": 80,
+            "UserVolumeSizeGib": 10
+        }
+      },
+      {
+        "DirectoryId" : "d-9467305add",
+        "UserName" : "diego.buess",
+        "BundleId" : "wsb-wzv36kmg6",
+        "WorkspaceProperties": {
+            "RunningMode": "AUTO_STOP",
+            "RunningModeAutoStopTimeoutInMinutes": 60,
+            "RootVolumeSizeGib": 80,
+            "UserVolumeSizeGib": 10
+        }
+      },      
+      {
+        "DirectoryId" : "d-9467305add",
+        "UserName" : "diogo.fernandes",
+        "BundleId" : "wsb-wzv36kmg6",
+        "WorkspaceProperties": {
+            "RunningMode": "AUTO_STOP",
+            "RunningModeAutoStopTimeoutInMinutes": 60,
+            "RootVolumeSizeGib": 80,
+            "UserVolumeSizeGib": 10
+        }
+      },
+      {
+        "DirectoryId" : "d-9467305add",
+        "UserName" : "ecbertozi",
+        "BundleId" : "wsb-wzv36kmg6",
+        "WorkspaceProperties": {
+            "RunningMode": "AUTO_STOP",
+            "RunningModeAutoStopTimeoutInMinutes": 60,
+            "RootVolumeSizeGib": 80,
+            "UserVolumeSizeGib": 10
+        }
+      },
+      {
+        "DirectoryId" : "d-9467305add",
+        "UserName" : "eliana.fernandes",
+        "BundleId" : "wsb-wzv36kmg6",
+        "WorkspaceProperties": {
+            "RunningMode": "AUTO_STOP",
+            "RunningModeAutoStopTimeoutInMinutes": 60,
+            "RootVolumeSizeGib": 80,
+            "UserVolumeSizeGib": 10
+        }
+      },
+      {
+        "DirectoryId" : "d-9467305add",
+        "UserName" : "elias.junior",
+        "BundleId" : "wsb-wzv36kmg6",
+        "WorkspaceProperties": {
+            "RunningMode": "AUTO_STOP",
+            "RunningModeAutoStopTimeoutInMinutes": 60,
+            "RootVolumeSizeGib": 80,
+            "UserVolumeSizeGib": 10
+        }
+      },
+      {
+        "DirectoryId" : "d-9467305add",
+        "UserName" : "erogatto",
+        "BundleId" : "wsb-wzv36kmg6",
+        "WorkspaceProperties": {
+            "RunningMode": "AUTO_STOP",
+            "RunningModeAutoStopTimeoutInMinutes": 60,
+            "RootVolumeSizeGib": 80,
+            "UserVolumeSizeGib": 10
+        }
+      },
+      {
+        "DirectoryId" : "d-9467305add",
+        "UserName" : "fabio.mashiba",
+        "BundleId" : "wsb-wzv36kmg6",
+        "WorkspaceProperties": {
+            "RunningMode": "AUTO_STOP",
+            "RunningModeAutoStopTimeoutInMinutes": 60,
+            "RootVolumeSizeGib": 80,
+            "UserVolumeSizeGib": 10
+        }
+      },
+      {
+        "DirectoryId" : "d-9467305add",
+        "UserName" : "jeferson.vieira",
+        "BundleId" : "wsb-wzv36kmg6",
+        "WorkspaceProperties": {
+            "RunningMode": "AUTO_STOP",
+            "RunningModeAutoStopTimeoutInMinutes": 60,
+            "RootVolumeSizeGib": 80,
+            "UserVolumeSizeGib": 10
+        }
+      },
+      {
+        "DirectoryId" : "d-9467305add",
+        "UserName" : "joana.gomes",
+        "BundleId" : "wsb-wzv36kmg6",
+        "WorkspaceProperties": {
+            "RunningMode": "AUTO_STOP",
+            "RunningModeAutoStopTimeoutInMinutes": 60,
+            "RootVolumeSizeGib": 80,
+            "UserVolumeSizeGib": 10
+        }
+      },
+      {
+        "DirectoryId" : "d-9467305add",
+        "UserName" : "kassia.brigatto",
+        "BundleId" : "wsb-wzv36kmg6",
+        "WorkspaceProperties": {
+            "RunningMode": "AUTO_STOP",
+            "RunningModeAutoStopTimeoutInMinutes": 60,
+            "RootVolumeSizeGib": 80,
+            "UserVolumeSizeGib": 10
+        }
+      },
+      {
+        "DirectoryId" : "d-9467305add",
+        "UserName" : "lais.borges",
+        "BundleId" : "wsb-wzv36kmg6",
+        "WorkspaceProperties": {
+            "RunningMode": "AUTO_STOP",
+            "RunningModeAutoStopTimeoutInMinutes": 60,
+            "RootVolumeSizeGib": 80,
+            "UserVolumeSizeGib": 10
+        }
+      },
+      {
+        "DirectoryId" : "d-9467305add",
+        "UserName" : "luana.silva",
+        "BundleId" : "wsb-wzv36kmg6",
+        "WorkspaceProperties": {
+            "RunningMode": "AUTO_STOP",
+            "RunningModeAutoStopTimeoutInMinutes": 60,
+            "RootVolumeSizeGib": 80,
+            "UserVolumeSizeGib": 10
+        }
+      },
+      {
+        "DirectoryId" : "d-9467305add",
+        "UserName" : "luiz.silva",
+        "BundleId" : "wsb-wzv36kmg6",
+        "WorkspaceProperties": {
+            "RunningMode": "AUTO_STOP",
+            "RunningModeAutoStopTimeoutInMinutes": 60,
+            "RootVolumeSizeGib": 80,
+            "UserVolumeSizeGib": 10
+        }
+      },
+      {
+        "DirectoryId" : "d-9467305add",
+        "UserName" : "marcelo.santos",
+        "BundleId" : "wsb-wzv36kmg6",
+        "WorkspaceProperties": {
+            "RunningMode": "AUTO_STOP",
+            "RunningModeAutoStopTimeoutInMinutes": 60,
+            "RootVolumeSizeGib": 80,
+            "UserVolumeSizeGib": 10
+        }
+      },
+      {
+        "DirectoryId" : "d-9467305add",
+        "UserName" : "marcos.thina",
+        "BundleId" : "wsb-wzv36kmg6",
+        "WorkspaceProperties": {
+            "RunningMode": "AUTO_STOP",
+            "RunningModeAutoStopTimeoutInMinutes": 60,
+            "RootVolumeSizeGib": 80,
+            "UserVolumeSizeGib": 10
+        }
+      },
+      {
+        "DirectoryId" : "d-9467305add",
+        "UserName" : "naathy.santos",
+        "BundleId" : "wsb-wzv36kmg6",
+        "WorkspaceProperties": {
+            "RunningMode": "AUTO_STOP",
+            "RunningModeAutoStopTimeoutInMinutes": 60,
+            "RootVolumeSizeGib": 80,
+            "UserVolumeSizeGib": 10
+        }
+      },
+      {
+        "DirectoryId" : "d-9467305add",
+        "UserName" : "pamela.camargo",
+        "BundleId" : "wsb-wzv36kmg6",
+        "WorkspaceProperties": {
+            "RunningMode": "AUTO_STOP",
+            "RunningModeAutoStopTimeoutInMinutes": 60,
+            "RootVolumeSizeGib": 80,
+            "UserVolumeSizeGib": 10
+        }
+      },
+      {
+        "DirectoryId" : "d-9467305add",
+        "UserName" : "patricia.bonafe",
+        "BundleId" : "wsb-wzv36kmg6",
+        "WorkspaceProperties": {
+            "RunningMode": "AUTO_STOP",
+            "RunningModeAutoStopTimeoutInMinutes": 60,
+            "RootVolumeSizeGib": 80,
+            "UserVolumeSizeGib": 10
+        }
+      },
+      {
+        "DirectoryId" : "d-9467305add",
+        "UserName" : "renata.goes",
+        "BundleId" : "wsb-wzv36kmg6",
+        "WorkspaceProperties": {
+            "RunningMode": "AUTO_STOP",
+            "RunningModeAutoStopTimeoutInMinutes": 60,
+            "RootVolumeSizeGib": 80,
+            "UserVolumeSizeGib": 10
+        }
+      },
+      {
+        "DirectoryId" : "d-9467305add",
+        "UserName" : "rosemeire.juarez",
+        "BundleId" : "wsb-wzv36kmg6",
+        "WorkspaceProperties": {
+            "RunningMode": "AUTO_STOP",
+            "RunningModeAutoStopTimeoutInMinutes": 60,
+            "RootVolumeSizeGib": 80,
+            "UserVolumeSizeGib": 10
+        }
+      },
+      {
+        "DirectoryId" : "d-9467305add",
+        "UserName" : "silvio.fernandes",
+        "BundleId" : "wsb-wzv36kmg6",
+        "WorkspaceProperties": {
+            "RunningMode": "AUTO_STOP",
+            "RunningModeAutoStopTimeoutInMinutes": 60,
+            "RootVolumeSizeGib": 80,
+            "UserVolumeSizeGib": 10
+        }
+      },
+      {
+        "DirectoryId" : "d-9467305add",
+        "UserName" : "tatiana.silva",
+        "BundleId" : "wsb-wzv36kmg6",
+        "WorkspaceProperties": {
+            "RunningMode": "AUTO_STOP",
+            "RunningModeAutoStopTimeoutInMinutes": 60,
+            "RootVolumeSizeGib": 80,
+            "UserVolumeSizeGib": 10
+        }
+      },
+      {
+        "DirectoryId" : "d-9467305add",
+        "UserName" : "vagner.martins",
+        "BundleId" : "wsb-wzv36kmg6",
+        "WorkspaceProperties": {
+            "RunningMode": "AUTO_STOP",
+            "RunningModeAutoStopTimeoutInMinutes": 60,
+            "RootVolumeSizeGib": 80,
+            "UserVolumeSizeGib": 10
+        }
+      },
+      {
+        "DirectoryId" : "d-9467305add",
+        "UserName" : "valdir",
+        "BundleId" : "wsb-wzv36kmg6",
+        "WorkspaceProperties": {
+            "RunningMode": "AUTO_STOP",
+            "RunningModeAutoStopTimeoutInMinutes": 60,
+            "RootVolumeSizeGib": 80,
+            "UserVolumeSizeGib": 10
+        }
+      },
+      {
+        "DirectoryId" : "d-9467305add",
+        "UserName" : "vanessa.silva",
+        "BundleId" : "wsb-wzv36kmg6",
+        "WorkspaceProperties": {
+            "RunningMode": "AUTO_STOP",
+            "RunningModeAutoStopTimeoutInMinutes": 60,
+            "RootVolumeSizeGib": 80,
+            "UserVolumeSizeGib": 10
+        }
+      },
+      {
+        "DirectoryId" : "d-9467305add",
+        "UserName" : "venessa.ribeiro",
+        "BundleId" : "wsb-wzv36kmg6",
+        "WorkspaceProperties": {
+            "RunningMode": "AUTO_STOP",
+            "RunningModeAutoStopTimeoutInMinutes": 60,
+            "RootVolumeSizeGib": 80,
+            "UserVolumeSizeGib": 10
+        }
+      },
+      {
+        "DirectoryId" : "d-9467305add",
+        "UserName" : "william.alcantara",
+        "BundleId" : "wsb-wzv36kmg6",
+        "WorkspaceProperties": {
+            "RunningMode": "AUTO_STOP",
+            "RunningModeAutoStopTimeoutInMinutes": 60,
+            "RootVolumeSizeGib": 80,
+            "UserVolumeSizeGib": 10
+        }
+      }
+    ]
+}
