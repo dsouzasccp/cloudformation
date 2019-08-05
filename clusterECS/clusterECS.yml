@@ -1,0 +1,416 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Example ECS Cluster - Creates a Load Balancer, AutoScaling Group and
+  LaunchConfiguration against an EXISTING VPC and EXISTING ECS Cluster
+Parameters:
+  EnvironmentValue:
+    AllowedValues:
+    - Qa
+    - Prod
+    Description: Qual o environment desejado?
+    Type: String
+  DomainValue:
+    AllowedValues:
+    - Dominio1
+    - Dominio2
+    - Dominio3
+    Description: Qual o dominio desejado?
+    Type: String
+    Default: Dominio3
+  SubnetIds:
+    Type: List<AWS::EC2::Subnet::Id>
+    Description: Comma separated list of VPC Subnet Ids where ECS instances should
+      run
+    Default: subnet-id,subnet-id,subnet-id
+  AvailabilityZones:
+    Type: List<AWS::EC2::AvailabilityZone::Name>
+    Description: AutoScaling Group Availability Zones. MUST MATCH THE SUBNETS AZ's
+    Default: sa-east-1a,sa-east-1b,sa-east-1c
+  EcsInstanceType:
+    Type: String
+    Description: ECS EC2 instance type
+    Default: t3.small
+    AllowedValues:
+    - t2.nano
+    - t2.micro
+    - t2.small
+    - t2.medium
+    - t2.large
+    - t3.small
+    - t3.medium
+    - t3.large
+    - m4.large
+    - m4.xlarge
+    - m4.2xlarge
+    - m4.4xlarge
+    - m4.10xlarge
+    - m3.medium
+    - m3.large
+    - m3.xlarge
+    - m3.2xlarge
+    - c4.large
+    - c4.xlarge
+    - c4.2xlarge
+    - c4.4xlarge
+    - c4.8xlarge
+    - c3.large
+    - c3.xlarge
+    - c3.2xlarge
+    - c3.4xlarge
+    - c3.8xlarge
+    - r3.large
+    - r3.xlarge
+    - r3.2xlarge
+    - r3.4xlarge
+    - r3.8xlarge
+    - i2.xlarge
+    - i2.2xlarge
+    - i2.4xlarge
+    - i2.8xlarge
+    ConstraintDescription: must be a valid EC2 instance type.
+  IamRoleInstanceProfile:
+    Type: String
+    Default: ecsInstanceRole
+    Description: Name or the Amazon Resource Name (ARN) of the instance profile associated
+      with the IAM role for the instance
+Mappings:      
+  Environments: 
+    Dominio1:
+      HostedZoneId: Z14MVVACLHVY4T
+      HostedZoneName: Dominio1.com.br.
+      CertificateArn1: arn:aws:acm:sa-east-1
+      CertificateArn2: arn:aws:acm:us-east-1
+    Dominio2:
+      HostedZoneId: ZGBQS4XDACDCJ
+      HostedZoneName: Dominio2.com.br.
+      CertificateArn1: arn:aws:acm:sa-east-1
+      CertificateArn2: arn:aws:acm:us-east-1
+    Dominio3:
+      HostedZoneId: Z1G88F4ISPR8NC
+      HostedZoneName: Dominio3.com.br.
+      CertificateArn1: arn:aws:acm:sa-east-1
+      CertificateArn2: arn:aws:acm:us-east-1
+    Qa:
+      LowerCase: qa
+      VPC: vpc_ID
+      AMI: ami-00129b193dc81bc31
+      KeyPair: Dominio1-HMG
+      SecurityGroup: sg_ID
+      ASGMAX: '2'
+      ASGMIN: '1'
+      CertificateArnDominio1: arn:aws:acm:us-east-1
+      CertificateArnDominio2: arn:aws:acm:us-east-1
+      CertificateArnDominio3: arn:aws:acm:us-east-1
+    Prod:
+      LowerCase: prod
+      VPC: vpc_ID
+      AMI: ami-085384d0e5fd5ae0a
+      KeyPair: Dominio1-PRD
+      SecurityGroup: sg_ID
+      ASGMAX: '4'
+      ASGMIN: '1'
+      CertificateArnDominio1: arn:aws:acm:sa-east-1
+      CertificateArnDominio2: arn:aws:acm:sa-east-1
+      CertificateArnDominio3: arn:aws:acm:sa-east-1
+Resources:
+  EcsClusterName:
+    Type: AWS::ECS::Cluster
+    Properties:
+      ClusterName:
+        Ref: AWS::StackName
+  SgClusterECS:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription:
+        Fn::Join:
+        - "-"
+        - - SG
+          - ECS
+          - Ref: AWS::StackName
+      VpcId:
+        Fn::FindInMap:
+        - Environments
+        - Ref: EnvironmentValue
+        - VPC
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: '22'
+        ToPort: '22'
+        CidrIp: 10.0.0.0/8
+      Tags:
+      - Key: Name
+        Value:
+          Fn::Join:
+          - "-"
+          - - SG
+            - ECS
+            - Ref: AWS::StackName
+      - Key: Environment
+        Value:
+          Ref: EnvironmentValue
+  SgAlbClusterECS:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription:
+        Fn::Join:
+        - "-"
+        - - SG
+          - ALB
+          - Ref: AWS::StackName
+      VpcId:
+        Fn::FindInMap:
+        - Environments
+        - Ref: EnvironmentValue
+        - VPC
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: '80'
+        ToPort: '80'
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: '443'
+        ToPort: '443'
+        CidrIp: 0.0.0.0/0
+      Tags:
+      - Key: Name
+        Value:
+          Fn::Join:
+          - "-"
+          - - SG
+            - ALB
+            - Ref: AWS::StackName
+      - Key: Environment
+        Value:
+          Ref: EnvironmentValue      
+  AlbClusterECS:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Name: !Sub ALB-${AWS::StackName}
+      Scheme: internet-facing
+      SecurityGroups:
+      - Fn::FindInMap:
+        - Environments
+        - Ref: EnvironmentValue
+        - SecurityGroup
+      - Ref: SgAlbClusterECS
+      Subnets:
+        Ref: SubnetIds
+      Type: application
+      Tags:
+      - Key: Name
+        Value:
+          Fn::Join:
+          - "-"
+          - - ALB
+            - !Sub ${AWS::StackName}
+      - Key: Environment
+        Value:
+          Ref: EnvironmentValue
+      - Key: CostCenter
+        Value:
+          Ref: DomainValue
+  TgClusterECS:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name: !Sub Tg-${AWS::StackName}
+      Port: 80
+      Protocol: HTTP
+      HealthCheckPath: "/"
+      HealthyThresholdCount: '2'
+      UnhealthyThresholdCount: '3'
+      HealthCheckTimeoutSeconds: '5'
+      HealthCheckIntervalSeconds: '15'
+      TargetGroupAttributes:
+      - Key: deregistration_delay.timeout_seconds
+        Value: '20'
+      - Key: stickiness.enabled
+        Value: 'true'
+      - Key: stickiness.lb_cookie.duration_seconds
+        Value: '600'
+      VpcId:
+        Fn::FindInMap:
+        - Environments
+        - Ref: EnvironmentValue
+        - VPC
+  ListenerHttp:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions:
+      - Type: forward
+        TargetGroupArn:
+          Ref: TgClusterECS
+      LoadBalancerArn:
+        Ref: AlbClusterECS
+      Port: '80'
+      Protocol: HTTP
+  ListenerHttps:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      Certificates:
+      - CertificateArn:
+          Fn::FindInMap:
+          - Environments
+          - Ref: EnvironmentValue
+          - CertificateArnDominio3
+      DefaultActions:
+      - Type: forward
+        TargetGroupArn:
+          Ref: TgClusterECS
+      LoadBalancerArn:
+        Ref: AlbClusterECS
+      Port: '443'
+      Protocol: HTTPS  
+  LcClusterECS:
+    Type: AWS::AutoScaling::LaunchConfiguration
+    Properties:
+      AssociatePublicIpAddress: 'True'
+      InstanceMonitoring: 'True'
+      ImageId:
+        Fn::FindInMap:
+        - Environments
+        - Ref: EnvironmentValue
+        - AMI
+      InstanceType:
+        Ref: EcsInstanceType
+      IamInstanceProfile:
+        Ref: IamRoleInstanceProfile
+      KeyName:
+        Fn::FindInMap:
+        - Environments
+        - Ref: EnvironmentValue
+        - KeyPair
+      SecurityGroups:
+      - Ref: SgClusterECS
+      - Fn::FindInMap:
+        - Environments
+        - Ref: EnvironmentValue
+        - SecurityGroup
+      UserData:
+        Fn::Base64:
+          Fn::Join:
+          - ''
+          - - "#!/bin/bash\n"
+            - echo ECS_CLUSTER=
+            - Ref: EcsClusterName
+            - " >> /etc/ecs/ecs.config"
+  AsgClusterECS:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      AvailabilityZones:
+        Ref: AvailabilityZones
+      VPCZoneIdentifier:
+        Ref: SubnetIds
+      LaunchConfigurationName:
+        Ref: LcClusterECS
+      TargetGroupARNs:
+      - Ref: TgClusterECS
+      MinSize:
+        Fn::FindInMap:
+        - Environments
+        - Ref: EnvironmentValue
+        - ASGMIN
+      MaxSize:
+        Fn::FindInMap:
+        - Environments
+        - Ref: EnvironmentValue
+        - ASGMAX
+      Tags:
+      - Key: Name
+        Value:
+          Ref: AWS::StackName
+        PropagateAtLaunch: 'true'
+      - Key: Environment
+        Value:
+          Ref: EnvironmentValue
+        PropagateAtLaunch: 'true'
+      - Key: CostCenter
+        Value:
+          Ref: DomainValue
+        PropagateAtLaunch: 'true'
+  MemoryReservationAlarmUpHighClusterECS:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub MemoryReservation ${AWS::StackName} greater than 80%
+      AlarmDescription: High MemoryReservation
+      MetricName: MemoryReservation
+      Namespace: AWS/ECS
+      Statistic: Average
+      Period: '300'
+      EvaluationPeriods: '2'
+      Threshold: '80'
+      AlarmActions:
+      - Ref: ScaleUpPolicyMemoryReservationClusterECS
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      Dimensions:
+      - Name: ClusterName
+        Value:
+          Ref: EcsClusterName
+  MemoryReservationAlarmDownLowClusterECS:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub MemoryReservation ${AWS::StackName} less than 30%
+      AlarmDescription: Low MemoryReservation
+      MetricName: MemoryReservation
+      Namespace: AWS/ECS
+      Statistic: Average
+      Period: '300'
+      EvaluationPeriods: '2'
+      Threshold: '30'
+      AlarmActions:
+      - Ref: ScaleDownPolicyMemoryReservationClusterECS
+      ComparisonOperator: LessThanThreshold
+      Dimensions:
+      - Name: ClusterName
+        Value:
+          Ref: EcsClusterName
+  ScaleUpPolicyMemoryReservationClusterECS:
+    Type: AWS::AutoScaling::ScalingPolicy
+    Properties:
+      AdjustmentType: ChangeInCapacity
+      AutoScalingGroupName:
+        Ref: AsgClusterECS
+      Cooldown: 60
+      ScalingAdjustment: 1
+  ScaleDownPolicyMemoryReservationClusterECS:
+    Type: AWS::AutoScaling::ScalingPolicy
+    Properties:
+      AdjustmentType: ChangeInCapacity
+      AutoScalingGroupName:
+        Ref: AsgClusterECS
+      Cooldown: 60
+      ScalingAdjustment: -1
+  CpuUtilizationAlarmUpHighClusterECS:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub CPUUtilization ${AWS::StackName} greater than 80%
+      AlarmDescription: High CpuUtilization
+      MetricName: CPUUtilization
+      Namespace: AWS/ECS
+      Statistic: Average
+      Period: '300'
+      EvaluationPeriods: '2'
+      Threshold: '80'
+      AlarmActions:
+      - Ref: ScaleUpPolicyCpuUtilizationClusterECS
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      Dimensions:
+      - Name: ClusterName
+        Value:
+          Ref: EcsClusterName
+  ScaleUpPolicyCpuUtilizationClusterECS:
+    Type: AWS::AutoScaling::ScalingPolicy
+    Properties:
+      AdjustmentType: ChangeInCapacity
+      AutoScalingGroupName:
+        Ref: AsgClusterECS
+      Cooldown: 60
+      ScalingAdjustment: 1
+Outputs:
+  EcsAutoScalingGroupName:
+    Description: AutoScaling Group Name which will manage creation of new ECS Instances
+    Value:
+      Ref: AsgClusterECS
+  EcsLaunchConfiguration:
+    Description: Launch Configuration the AutoScalingGroup will use when creating
+      new ECS Instances
+    Value:
+      Ref: LcClusterECS
